@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:mercado/src/inicio.dart';
+import 'package:mercado/src/get_mercados.dart';
 
 int id = 0;
 String nomeDeus = '';
@@ -19,7 +19,7 @@ class AtualizaMercado extends StatefulWidget {
   }
 }
 
-Future<AlertDialog> atualizaMercado(
+Future<void> atualizaMercado(
     int id, String nome, String cnpj, BuildContext context) async {
   var url = 'http://localhost:8080/atualizaMercado';
   var response = await http.put(Uri.parse(url),
@@ -27,16 +27,13 @@ Future<AlertDialog> atualizaMercado(
       body:
           jsonEncode(<String, dynamic>{"id": id, "nome": nome, "cnpj": cnpj}));
 
-  if (response.statusCode == 200) {
-    showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-              title: Text('Backend Response'), content: Text(response.body));
-        });
-  }
-  return AlertDialog(title: Text('Epic Fail'), content: Text(response.body));
+  showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+            title: Text('Backend Response'), content: Text(response.body));
+      });
 }
 
 class _AtualizaMercadoState extends State<AtualizaMercado> {
@@ -53,10 +50,11 @@ class _AtualizaMercadoState extends State<AtualizaMercado> {
         leading: IconButton(
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => TelaInicio()));
+                  MaterialPageRoute(builder: (context) => GetMercado()));
             },
             icon: Icon(Icons.arrow_back_ios_new)),
       ),
+      backgroundColor: Colors.blue.shade200,
       body: Padding(
         padding: EdgeInsets.only(top: 5, bottom: 5),
         child: ListView(children: [
@@ -83,14 +81,14 @@ class _AtualizaMercadoState extends State<AtualizaMercado> {
             onPressed: () async {
               String nome = nomeController.text;
               String cnpj = cnpjController.text;
-              AlertDialog ad = await atualizaMercado(id, nome, cnpj, context);
+              await atualizaMercado(id, nome, cnpj, context);
               nomeController.text = '';
               cnpjController.text = '';
-              setState(() {
-                AlertDialog(title: ad.title, content: ad.content);
-              });
+              setState(() {});
             },
             child: Text('Atualizar!'),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.black)),
           )
         ]),
       ),
@@ -100,7 +98,7 @@ class _AtualizaMercadoState extends State<AtualizaMercado> {
           await removerMercado(id, context);
           setState(() {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => TelaInicio()));
+                context, MaterialPageRoute(builder: (context) => GetMercado()));
           });
         },
         backgroundColor: Colors.red,

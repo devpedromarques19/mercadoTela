@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:mercado/src/add_produto.dart';
 import 'package:mercado/src/atualiza_produto.dart';
 
-import 'inicio.dart';
+import 'get_mercados.dart';
 
 int id = 0;
 
@@ -47,10 +47,11 @@ class _GetProdutosState extends State<GetProdutos> {
         leading: IconButton(
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => TelaInicio()));
+                  MaterialPageRoute(builder: (context) => GetMercado()));
             },
             icon: Icon(Icons.arrow_back_ios_new)),
       ),
+      backgroundColor: Colors.blue.shade200,
       body: Container(
         child: FutureBuilder(
           future: getProdutos(),
@@ -121,6 +122,7 @@ class _GetProdutosState extends State<GetProdutos> {
                   builder: (context) => AdicionaProduto(aux: id)));
         },
         child: Icon(Icons.add),
+        backgroundColor: Colors.white,
       ),
     );
   }

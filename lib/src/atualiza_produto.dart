@@ -27,7 +27,7 @@ class AtualizaProduto extends StatefulWidget {
   }
 }
 
-Future<AlertDialog> atualizaProduto(int id, String nome, String preco,
+Future<void> atualizaProduto(int id, String nome, String preco,
     String quantidade, int mercadoId, BuildContext context) async {
   var url = 'http://localhost:8080/atualizaProduto';
   var response = await http.put(Uri.parse(url),
@@ -40,16 +40,13 @@ Future<AlertDialog> atualizaProduto(int id, String nome, String preco,
         "mercado_id": mercadoId
       }));
 
-  if (response.statusCode == 200) {
-    showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-              title: Text('Backend Response'), content: Text(response.body));
-        });
-  }
-  return AlertDialog(title: Text('Epic Fail'), content: Text(response.body));
+  showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+            title: Text('Backend Response'), content: Text(response.body));
+      });
 }
 
 class _AtualizaProdutoState extends State<AtualizaProduto> {
@@ -74,6 +71,7 @@ class _AtualizaProdutoState extends State<AtualizaProduto> {
             },
             icon: Icon(Icons.arrow_back_ios_new)),
       ),
+      backgroundColor: Colors.blue.shade200,
       body: Padding(
         padding: EdgeInsets.only(top: 5, bottom: 5),
         child: ListView(children: [
@@ -112,23 +110,23 @@ class _AtualizaProdutoState extends State<AtualizaProduto> {
               String nome = nomeController.text;
               String preco = precoController.text;
               String quantidade = quantidadeController.text;
-              AlertDialog ad = await atualizaProduto(
+              await atualizaProduto(
                   id, nome, preco, quantidade, mercadoId, context);
               nomeController.text = '';
               precoController.text = '';
               quantidadeController.text = '';
-              setState(() {
-                AlertDialog(title: ad.title, content: ad.content);
-              });
+              setState(() {});
             },
             child: Text('Atualizar!'),
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(Colors.black)),
           )
         ]),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.delete),
         onPressed: () async {
-          AlertDialog ad = await removeProduto(id, context);
+          await removeProduto(id, context);
           setState(() {
             Navigator.push(
                 context,
@@ -142,20 +140,9 @@ class _AtualizaProdutoState extends State<AtualizaProduto> {
   }
 }
 
-Future<AlertDialog> removeProduto(int id, BuildContext context) async {
+Future<void> removeProduto(int id, BuildContext context) async {
   var url = 'http://localhost:8080/removerProduto';
-  var response = await http.delete(Uri.parse(url),
+  await http.delete(Uri.parse(url),
       headers: <String, String>{"Content-Type": "application/json"},
       body: jsonEncode(<String, dynamic>{"id": id}));
-
-  if (response.statusCode == 200) {
-    showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-              title: Text('Backend Response'), content: Text(response.body));
-        });
-  }
-  return AlertDialog(title: Text('Epic Fail'), content: Text(response.body));
 }

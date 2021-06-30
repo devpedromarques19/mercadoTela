@@ -1,30 +1,27 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:mercado/src/inicio.dart';
+import 'package:mercado/src/get_mercados.dart';
 
 class AdicionaMercado extends StatefulWidget {
   @override
   _AdicionaMercadoState createState() => _AdicionaMercadoState();
 }
 
-Future<AlertDialog> registraMercado(
+Future<void> registraMercado(
     String nome, String cnpj, BuildContext context) async {
   var url = 'http://localhost:8080/adicionaMercado';
   var response = await http.post(Uri.parse(url),
       headers: <String, String>{"Content-Type": "application/json"},
       body: jsonEncode(<String, String>{"nome": nome, "cnpj": cnpj}));
 
-  if (response.statusCode == 200) {
-    showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-              title: Text('Backend Response'), content: Text(response.body));
-        });
-  }
-  return AlertDialog(title: Text('Epic Fail'), content: Text(response.body));
+  showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+            title: Text('Backend Response'), content: Text(response.body));
+      });
 }
 
 class _AdicionaMercadoState extends State<AdicionaMercado> {
@@ -39,10 +36,11 @@ class _AdicionaMercadoState extends State<AdicionaMercado> {
           leading: IconButton(
               onPressed: () {
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => TelaInicio()));
+                    MaterialPageRoute(builder: (context) => GetMercado()));
               },
               icon: Icon(Icons.arrow_back_ios_new)),
         ),
+        backgroundColor: Colors.blue.shade200,
         body: Padding(
           padding: EdgeInsets.only(top: 5, bottom: 5),
           child: ListView(children: [
@@ -69,14 +67,14 @@ class _AdicionaMercadoState extends State<AdicionaMercado> {
               onPressed: () async {
                 String nome = nomeController.text;
                 String cnpj = cnpjController.text;
-                AlertDialog ad = await registraMercado(nome, cnpj, context);
+                await registraMercado(nome, cnpj, context);
                 nomeController.text = '';
                 cnpjController.text = '';
-                setState(() {
-                  AlertDialog(title: ad.title, content: ad.content);
-                });
+                setState(() {});
               },
               child: Text('Registrar!'),
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.black)),
             )
           ]),
         ));

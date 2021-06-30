@@ -15,8 +15,8 @@ class AdicionaProduto extends StatefulWidget {
   }
 }
 
-Future<AlertDialog> registraProduto(String nome, String preco,
-    String quantidade, int mercadoId, BuildContext context) async {
+Future<void> registraProduto(String nome, String preco, String quantidade,
+    int mercadoId, BuildContext context) async {
   var url = 'http://localhost:8080/adicionaProduto';
   var response = await http.post(Uri.parse(url),
       headers: <String, String>{"Content-Type": "application/json"},
@@ -27,16 +27,13 @@ Future<AlertDialog> registraProduto(String nome, String preco,
         "mercado_id": mercadoId
       }));
 
-  if (response.statusCode == 200) {
-    showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-              title: Text('Backend Response'), content: Text(response.body));
-        });
-  }
-  return AlertDialog(title: Text('Epic Fail'), content: Text(response.body));
+  showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+            title: Text('Backend Response'), content: Text(response.body));
+      });
 }
 
 class _AdicionaProdutoState extends State<AdicionaProduto> {
@@ -58,6 +55,7 @@ class _AdicionaProdutoState extends State<AdicionaProduto> {
               },
               icon: Icon(Icons.arrow_back_ios_new)),
         ),
+        backgroundColor: Colors.blue.shade200,
         body: Padding(
           padding: EdgeInsets.only(top: 5, bottom: 5),
           child: ListView(children: [
@@ -96,16 +94,16 @@ class _AdicionaProdutoState extends State<AdicionaProduto> {
                 String nome = nomeController.text;
                 String preco = precoController.text;
                 String quantidade = quantidadeController.text;
-                AlertDialog ad =
-                    await registraProduto(nome, preco, quantidade, id, context);
+
+                await registraProduto(nome, preco, quantidade, id, context);
                 nomeController.text = '';
                 precoController.text = '';
                 quantidadeController.text = '';
-                setState(() {
-                  AlertDialog(title: ad.title, content: ad.content);
-                });
+                setState(() {});
               },
               child: Text('Registrar!'),
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.black)),
             )
           ]),
         ));
